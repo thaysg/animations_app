@@ -5,6 +5,7 @@ class TextFormFieldWidget extends StatelessWidget {
   final Function(String) onChanged;
   final FormFieldValidator<String> validator;
   final VoidCallback onTap;
+  final Function(String)? onFieldSubmitted;
 
   const TextFormFieldWidget({
     Key? key,
@@ -12,6 +13,7 @@ class TextFormFieldWidget extends StatelessWidget {
     required this.onChanged,
     required this.validator,
     required this.onTap,
+    required this.onFieldSubmitted,
   }) : super(key: key);
 
   @override
@@ -20,6 +22,8 @@ class TextFormFieldWidget extends StatelessWidget {
       children: [
         Expanded(
           child: TextFormField(
+            autofocus: true,
+            onFieldSubmitted: onFieldSubmitted,
             decoration: InputDecoration(
               fillColor: Colors.white,
               labelText: 'Participant Name',

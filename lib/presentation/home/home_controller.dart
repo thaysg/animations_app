@@ -30,17 +30,7 @@ class HomeController extends GetxController {
       selectedValue = _;
     });
     update();
-    // return selectedValue ?? 0;
-    /* await for (var i in selected.stream) {
-      if (selectedValue != null) {
-        selectedValue = i;
-      }
-
-      selected.stream.listen((_) {
-      selectedValue = _;
-    }).onDone(() { }); 
-      update();
-    } */
+    return selectedValue;
   }
 
   final colors = <Color>[
@@ -73,7 +63,7 @@ class HomeController extends GetxController {
   }
 
   String onChangeString(String value) {
-    if (value.substring(value.length - 1) == ',') {
+    if (value.substring(value.length - 1) == '') {
       participants.add(value.substring(0, value.length - 1));
 
       Future<void>.delayed(
@@ -88,6 +78,20 @@ class HomeController extends GetxController {
   void clearParticipants() {
     controller.text = '';
     participants.clear();
+    update();
+  }
+
+  onFieldSubmitted(String value) {
+    participants.add(value);
+    Future<void>.delayed(
+      const Duration(milliseconds: 10),
+      controller.clear,
+    );
+    update();
+  }
+
+  void removeParticipant() {
+    participants.removeAt(selectedValue!);
     update();
   }
 }

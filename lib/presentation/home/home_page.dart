@@ -30,11 +30,15 @@ class HomePage extends StatelessWidget {
                     GetBuilder<HomeController>(
                       init: HomeController(),
                       builder: (_controller) {
-                        return TextFormFieldWidget(
-                          controller: _controller.controller,
-                          validator: _controller.validateString,
-                          onChanged: _controller.onChangeString,
-                          onTap: _controller.clearParticipants,
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 24.0),
+                          child: TextFormFieldWidget(
+                            onFieldSubmitted: _controller.onFieldSubmitted,
+                            controller: _controller.controller,
+                            validator: _controller.validateString,
+                            onChanged: _controller.onChangeString,
+                            onTap: _controller.clearParticipants,
+                          ),
                         );
                       },
                     ),
@@ -52,10 +56,37 @@ class HomePage extends StatelessWidget {
                             itemCount: _controller.participants.length,
                             itemBuilder: (_, int idx) {
                               return Text(
-                                _controller.participants[idx] + ', ',
+                                _controller.participants[idx] + ' ',
                                 maxLines: 5,
                               );
                             },
+                          );
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: GetBuilder<HomeController>(
+                        init: HomeController(),
+                        builder: (_controller) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton.icon(
+                              onPressed: () {
+                                _controller.removeParticipant();
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                              label: const Text(
+                                'Remover Participante Selecionado',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -65,65 +96,71 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(width: 24.0),
               Expanded(
-                child: GetBuilder<HomeController>(
-                  init: HomeController(),
-                  builder: (_controller) {
-                    if (_controller.participants.isNotEmpty &&
-                        _controller.participants.length > 1) {
-                      return FortuneWhellWidget(
-                        onAnimationEnd: () {
-                          _controller.seletcStream();
-                        },
-                        onTap: () {
-                          _controller.selectdParticpant();
-                          //_controller.seletcStream();
-                        },
-                        onFling: () {
-                          _controller.selected.add(1);
-                        },
-                        selected: _controller.selected.stream,
-                        items: [
-                          for (var it in _controller.participants)
-                            FortuneItem(
-                              style: FortuneItemStyle(
-                                color: _controller.colors[Fortune.randomInt(
-                                    0, _controller.colors.length)],
-                              ),
-                              child: Text(it),
-                            ),
-                        ],
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              GetBuilder<HomeController>(
-                init: HomeController(),
-                builder: (_controller) {
-                  if (_controller.selectedValue != null) {
-                    return FutureBuilder(
-                      future: Future.delayed(
-                        const Duration(seconds: 4),
-                        () => _controller.selectedValue,
-                      ),
-                      builder: (_, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return Text(
-                            'Winner: ${_controller.participants[_controller.selectedValue!]}',
-                            style: const TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                flex: 2,
+                child: Column(
+                  children: [
+                    GetBuilder<HomeController>(
+                      init: HomeController(),
+                      builder: (_controller) {
+                        if (_controller.participants.isNotEmpty &&
+                            _controller.participants.length > 1) {
+                          return FortuneWhellWidget(
+                            onAnimationEnd: () {
+                              _controller.seletcStream();
+                            },
+                            onTap: () {
+                              _controller.selectdParticpant();
+                              //_controller.seletcStream();
+                            },
+                            onFling: () {
+                              _controller.selected.add(1);
+                            },
+                            selected: _controller.selected.stream,
+                            items: [
+                              for (var it in _controller.participants)
+                                FortuneItem(
+                                  style: FortuneItemStyle(
+                                    color: _controller.colors[Fortune.randomInt(
+                                        0, _controller.colors.length)],
+                                  ),
+                                  child: Text(it),
+                                ),
+                            ],
                           );
                         }
                         return const SizedBox();
                       },
-                    );
-                  }
-                  return const SizedBox();
-                },
+                    ),
+                    const SizedBox(height: 16.0),
+                    GetBuilder<HomeController>(
+                      init: HomeController(),
+                      builder: (_controller) {
+                        if (_controller.selectedValue != null) {
+                          return FutureBuilder(
+                            future: Future.delayed(
+                              const Duration(seconds: 4),
+                              () => _controller.selectedValue,
+                            ),
+                            builder: (_, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return Text(
+                                  'Winner: ${_controller.participants[_controller.selectedValue!]}',
+                                  style: const TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          );
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
